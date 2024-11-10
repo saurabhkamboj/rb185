@@ -1,0 +1,7 @@
+- Calls to `PG.connect` return a `PG::Result object`
+- "Using the `pry` method `cd` I can enter the cd enter `result`.
+- Tuple here is a Ruby hash.
+- A row returns an array with values which were in the original row.
+
+- Connect to the database using `PG.connect(dbname: "")`, and assign the returned object to a variable.
+- To execute a SQL query `db.exec([query])`, and assign the returned object to a variable.
