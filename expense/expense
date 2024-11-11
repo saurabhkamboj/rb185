@@ -17,9 +17,10 @@ def info
   INFO
 end
 
-def list
-  db = PG.connect(dbname: 'expenses')
-  result = db.exec("SELECT * FROM expenses ORDER BY created_on")
+CONNECTION = PG.connect(dbname: 'expenses')
+
+def list_expenses
+  result = CONNECTION.exec("SELECT * FROM expenses ORDER BY created_on")
 
   result.each do |tuple|
     columns = [ tuple['id'].rjust(3),
@@ -31,21 +32,21 @@ def list
   end
 end
 
-if ARGV.empty?
-  puts info
-else
-  ARGV.each do |command|
-    method(:"#{command}").call
-  end
+def add_expense(amount, memo)
+  query = "INSERT INTO expenses (amount, memo) VALUES (#{amount}, '#{memo}')"
+  CONNECTION.exec(query)
 end
 
-# Alternate
+command = ARGV.first
 
-=begin
-  command = ARGV.first
-  if command == 'list'
-    list_expenses
-  else
-    display_help
-  end
-=end
+case command
+when 'list'
+  list_expenses
+when 'add'
+  amount, memo = ARGV[1], ARGV[2]
+
+  abort 'You must provide an amount and memo.' unless amount && memo
+  add_expense(amount, memo)
+else
+  puts info
+end
