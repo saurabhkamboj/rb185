@@ -2,6 +2,7 @@
 
 require 'pg'
 require 'bundler/setup'
+require 'date'
 
 def info
   <<~INFO
@@ -33,8 +34,10 @@ def list_expenses
 end
 
 def add_expense(amount, memo)
-  query = "INSERT INTO expenses (amount, memo) VALUES (#{amount}, '#{memo}')"
-  CONNECTION.exec(query)
+  date = Date.today
+  query = "INSERT INTO expenses (amount, memo, created_on) VALUES ($1, $2, $3)"
+
+  CONNECTION.exec_params(query, [amount, memo, date])
 end
 
 command = ARGV.first
