@@ -3,14 +3,49 @@
 require 'pg'
 require 'bundler/setup'
 
-db = PG.connect(dbname: 'expenses')
-result = db.exec("SELECT * FROM expenses;")
+def info
+  <<~INFO
+    An expense recording system
 
-result.each do |tuple|
-  columns = [ tuple['id'].rjust(3),
-              tuple['created_on'].rjust(10),
-              tuple['amount'].rjust(10),
-              tuple['memo'] ]
+    Commands:
 
-  puts columns.join(' | ')
+    add AMOUNT MEMO - record a new expense
+    clear - delete all expenses
+    list - list all expenses
+    delete NUMBER - remove expense with id NUMBER
+    search QUERY - list expenses with a matching memo field
+  INFO
 end
+
+def list
+  db = PG.connect(dbname: 'expenses')
+  result = db.exec("SELECT * FROM expenses ORDER BY created_on")
+
+  result.each do |tuple|
+    columns = [ tuple['id'].rjust(3),
+                tuple['created_on'].rjust(10),
+                tuple['amount'].rjust(10),
+                tuple['memo'] ]
+
+    puts columns.join(' | ')
+  end
+end
+
+if ARGV.empty?
+  puts info
+else
+  ARGV.each do |command|
+    method(:"#{command}").call
+  end
+end
+
+# Alternate
+
+=begin
+  command = ARGV.first
+  if command == 'list'
+    list_expenses
+  else
+    display_help
+  end
+=end
