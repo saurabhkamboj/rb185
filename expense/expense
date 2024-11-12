@@ -115,11 +115,11 @@ class CLI
   end
 
   def run(arguments)
-    command = arguments.first
+    command = arguments.shift
 
     case command
     when 'add'
-      amount, memo = ARGV[1], ARGV[2]
+      amount, memo = ARGV[0], ARGV[1]
 
       abort 'You must provide an amount and memo.' unless amount && memo
 
@@ -127,9 +127,9 @@ class CLI
     when 'list'
       @application.list_expenses
     when 'search'
-      @application.list_select_expenses(ARGV[1])
+      @application.list_select_expenses(ARGV[0])
     when 'delete'
-      @application.delete_expense(ARGV[1])
+      @application.delete_expense(ARGV[0])
     when 'clear'
       puts '=> This will remove all expenses, are you sure? (y/n)'
       response = $stdin.getch
